@@ -12,3 +12,5 @@ libraryDependencies ++= {
     "net.debasishg" %% "redisclient" % "3.41",
   )
 }
+
+enablePlugins(JettyPlugin)
