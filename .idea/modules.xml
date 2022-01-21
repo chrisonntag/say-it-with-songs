@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/say-it-with-songs.iml" filepath="$PROJECT_DIR$/.idea/modules/say-it-with-songs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/say-it-with-songs-build.iml" filepath="$PROJECT_DIR$/.idea/modules/say-it-with-songs-build.iml" />
+    </modules>
+  </component>
+</project>
