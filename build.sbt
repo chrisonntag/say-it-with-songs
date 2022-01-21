@@ -9,5 +9,6 @@ libraryDependencies ++= {
     "org.jsoup" % "jsoup" % "1.12.1",
     "com.lihaoyi" %% "cask" % "0.7.3",
     "com.lihaoyi" %% "requests" % "0.5.1",
+    "net.debasishg" %% "redisclient" % "3.41",
   )
 }
