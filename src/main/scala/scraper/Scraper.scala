@@ -1,5 +1,6 @@
 package scraper
 
+import com.redis.RedisClient
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -13,15 +14,25 @@ class Scraper(t: String) {
     var text: String = t
     var limit: Int = Int.MaxValue
     var maxJaccard: Int = 3
+    val redisClient = new RedisClient("localhost", 6379)
 
     def queryText(text: String): List[(String, Option[Song])] = {
         val words = text.split(" ").map(_.trim).toList
+
+        def getOrQuery(word: String, url: Option[String]): Option[Song] = url match {
+            case Some(s) => Option(Song(word, s))
+            case None => queryWord(word).headOption
+        }
 
         def processWords(words: List[String], idx: Int, acc: List[(String, Option[Song])]): List[(String, Option[Song])] = {
             if (idx >= words.length) {
                 acc
             } else {
-                val song: Option[Song] = queryWord(words(idx)).headOption
+                val song: Option[Song] = getOrQuery(words(idx), redisClient.get(words(idx)))
+                song match {
+                    case Some(s) => redisClient.set(words(idx), s.url)
+                    case None =>
+                }
                 processWords(words, idx + 1, acc ::: List((words(idx), song)))
             }
         }
