@@ -1,10 +1,12 @@
 package scraper
 
 import com.redis.RedisClient
-import org.jsoup.Jsoup
+import org.jsoup.{Connection, Jsoup}
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import scraper.Proxy
 
+import java.net.ConnectException
 import scala.annotation.tailrec
 import scala.util.Random
 
@@ -53,11 +55,7 @@ class Scraper(t: String) {
 
     def queryWord(word: String): List[Song] = {
         @tailrec
-        def scrapeSongList(elements: Elements,
-                           idx: Int,
-                           acc: List[Song],
-                           count: Int,
-                           limit: Int): List[Song] = {
+        def scrapeSongList(elements: Elements, idx: Int, acc: List[Song], count: Int, limit: Int): List[Song] = {
             if (idx >= elements.size() || count >= limit) {
                 acc
             } else {
@@ -69,30 +67,49 @@ class Scraper(t: String) {
             }
         }
 
-        val doc: Document = getJsoupDoc("https://soundcloud.com/search/sounds?q=" + word)
-        // Search for ul's since javascript is disabled in this case.
-        val songList = doc.select("ul").get(1).select("li")
+        getJsoupDoc("https://soundcloud.com/search/sounds?q=" + word) match {
+            case Some(doc) =>
+                // Search for ul's since javascript is disabled in this case.
+                val songList = doc.select("ul").get(1).select("li")
 
-        scrapeSongList(songList, 0, Nil, 0, limit)
-          .filter(_.title.length >= word.length) // minimum as long as the word itself
-          .filter(_.jaccardIndex(word) <= maxJaccard)
-          .sortBy(_.title.length) // sort in ascending order (shortest result first)
+                scrapeSongList(songList, 0, Nil, 0, limit)
+                  .filter(_.title.length >= word.length) // minimum as long as the word itself
+                  .filter(_.jaccardIndex(word) <= maxJaccard)
+                  .sortBy(_.title.length) // sort in ascending order (shortest result first)
+            case None =>
+                println("Could not get tracks document.")
+                List(Song(word, ""))
+        }
     }
-
 
     def getEmbedUrl(trackUrl: String): String = {
-        val doc: Document = getJsoupDoc(trackUrl)
-        doc.select("meta[itemprop=\"embedUrl\"]").attr("content")
+        getJsoupDoc(trackUrl) match {
+            case Some(doc) => doc.select("meta[itemprop=\"embedUrl\"]").attr("content")
+            case None =>
+                println("Could not connect to get embedUrl for this track: " + trackUrl)
+                ""
+        }
     }
 
-    def getJsoupDoc(url: String): Document = {
+    def getJsoupDoc(url: String): Option[Document] = {
         val random = new Random
-        //val proxy: (String, Int) = Proxy.getProxy()
-        Jsoup
-          .connect(url)
-          .userAgent(userAgents(random.nextInt(userAgents.length)))
-          .referrer("http://www.google.com")
-          .get()
+        val ua = userAgents(random.nextInt(userAgents.length))
+        val connection: Connection = Jsoup.connect(url).userAgent(ua).referrer("http://www.google.com")
+
+        def tunnelConnection(conn: Connection, proxy: (String, Int)): Connection = proxy match {
+            case (host, port) if port > 0 => conn.proxy(host, port)
+            case _ =>
+                println("Connecting without proxy")
+                conn
+        }
+
+        try {
+            Some(tunnelConnection(connection, Proxy.getProxy()).get())
+        } catch {
+            case e: Exception =>
+                println(e)
+                None
+        }
     }
 
 }
