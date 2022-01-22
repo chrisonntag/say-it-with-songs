@@ -10,7 +10,7 @@ import java.net.ConnectException
 object Proxy {
     def testProxy(host: String, port: Int): Boolean = {
         try {
-            Jsoup.connect("http://www.google.com").proxy(host, port).get()
+            Jsoup.connect("http://www.google.com").timeout(2 * 1000).proxy(host, port).get()
             true
         } catch {
             case e: ConnectException =>
@@ -29,7 +29,9 @@ object Proxy {
         }
 
         val doc: Option[Document] = try {
-            Some(Jsoup.connect("http://pubproxy.com/api/proxy?limit=1&format=txt&https=true&last_check=1&type=http").get())
+            //val url = "http://pubproxy.com/api/proxy?limit=1&format=txt&https=true&last_check=1&type=http"
+            val url = "https://www.proxyscan.io/api/proxy?format=txt&type=https&limit=1&ping=50"
+            Some(Jsoup.connect(url).timeout(2 * 1000).get())
         } catch {
             case e: Exception =>
                 println(e)
@@ -39,11 +41,13 @@ object Proxy {
         doc match {
             case Some(d) =>
                 matchIPPort(d.select("body").text()) match {
-                    case (host, port) if port > 0 => if (testProxy(host, port)) {
-                        (host, port)
-                    } else {
-                        ("", -1)
-                    }
+                    case (host, port) if port > 0 =>
+                        println("Testing proxy " + host + ":" + port)
+                        if (testProxy(host, port)) {
+                            (host, -1)
+                        } else {
+                            ("", -1)
+                        }
                     case _ => ("", -1)
                 }
             case None =>

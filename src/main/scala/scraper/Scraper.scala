@@ -97,14 +97,16 @@ class Scraper(t: String) {
         val connection: Connection = Jsoup.connect(url).userAgent(ua).referrer("http://www.google.com")
 
         def tunnelConnection(conn: Connection, proxy: (String, Int)): Connection = proxy match {
-            case (host, port) if port > 0 => conn.proxy(host, port)
+            case (host, port) if port > 0 =>
+                println("Using proxy " + host + ":" + port)
+                conn.proxy(host, port)
             case _ =>
                 println("Connecting without proxy")
                 conn
         }
 
         try {
-            Some(tunnelConnection(connection, Proxy.getProxy()).get())
+            Some(connection.get())
         } catch {
             case e: Exception =>
                 println(e)
