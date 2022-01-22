@@ -9,6 +9,7 @@ case class Embed(word: String, embedUrl: String, title: String) {}
 
 object Main extends cask.MainRoutes {
     override def port: Int = 8081
+    override def host: String = "0.0.0.0"
 
     @cask.postJson("/api")
     def getResults(text: String) = {

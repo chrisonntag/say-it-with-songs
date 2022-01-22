@@ -13,4 +13,5 @@ libraryDependencies ++= {
   )
 }
 
+mainClass in (Compile, packageBin) := Some("scraper.Main")
 enablePlugins(JettyPlugin)
