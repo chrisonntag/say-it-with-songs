@@ -1,5 +1,6 @@
 package scraper
 
+import cask.model.Response
 import jdk.internal.platform.Container
 import scraper.Scraper
 import upickle.default._
@@ -12,7 +13,7 @@ object Main extends cask.MainRoutes {
     override def host: String = "0.0.0.0"
 
     @cask.postJson("/api")
-    def getResults(text: String) = {
+    def getResults(text: String): Response[ujson.Obj] = {
         val scraper: Scraper = new Scraper(text)
         val res: List[(String, Option[Song])] = scraper.queryText(text)
 
@@ -52,7 +53,7 @@ object Main extends cask.MainRoutes {
     }
 
     @cask.route("/api", methods = Seq("options"))
-    def cors(request: cask.Request) = {
+    def cors(request: cask.Request): Response[String] = {
         cask.Response("", 200, Seq(("Access-Control-Allow-Origin", "*"), ("Access-Control-Allow-Headers", "*")))
     }
 

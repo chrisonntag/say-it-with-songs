@@ -14,3 +14,17 @@ command=java -jar %(ENV_HOME)s/apps/say-it-with-songs/target/scala-2.13/say-it-w
 ### Connect redis 
 Redis is used for "caching" the song URL's for certain words. Install redis on your server and let it run on port ```6379```. 
 Follow the official [uberspace](https://lab.uberspace.de/guide_redis.html) instructions for more info.
+
+## Code style
+This project uses [Scalastyle](https://scalastyle.org/sbt.html) to ensure a consistent codestyle and best-practices. 
+Use 
+```
+sbt scalastyleGenerateConfig
+```
+
+to generate a configuration file and 
+```
+sbt scalastyle
+```
+
+to check the project using the sbt shell.
