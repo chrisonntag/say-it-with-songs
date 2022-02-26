@@ -1,5 +1,6 @@
-[debug] downloaded https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.4.20.v20190813/jetty-runner-9.4.20.v20190813.pom
-[debug] downloaded https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-project/9.4.20.v20190813/jetty-project-9.4.20.v20190813.pom
-[debug] downloaded https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.4.20.v20190813/jetty-runner-9.4.20.v20190813.jar
-[debug] downloaded https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.4.20.v20190813/jetty-runner-9.4.20.v20190813-javadoc.jar
-[debug] downloaded https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-runner/9.4.20.v20190813/jetty-runner-9.4.20.v20190813-sources.jar
+[debug] downloaded https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.11/commons-lang3-3.11.pom
+[debug] downloaded https://repo1.maven.org/maven2/org/apache/commons/commons-parent/51/commons-parent-51.pom
+[debug] downloaded https://repo1.maven.org/maven2/org/apache/apache/23/apache-23.pom
+[debug] downloaded https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.11/commons-lang3-3.11.jar
+[debug] downloaded https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.11/commons-lang3-3.11-javadoc.jar
+[debug] downloaded https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.11/commons-lang3-3.11-sources.jar

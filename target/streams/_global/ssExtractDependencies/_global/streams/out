@@ -1,8 +1,23 @@
-[error] java.lang.RuntimeException: Conflicting cross-version suffixes in: io.circe:circe-core, io.circe:circe-numbers
-[error] 	at scala.sys.package$.error(package.scala:30)
-[error] 	at sbt.librarymanagement.ConflictWarning$.processCrossVersioned(ConflictWarning.scala:39)
-[error] 	at sbt.librarymanagement.ConflictWarning$.apply(ConflictWarning.scala:19)
-[error] 	at sbt.Classpaths$.$anonfun$ivyBaseSettings$70(Defaults.scala:3001)
+[error] sbt.librarymanagement.ResolveException: Error downloading org.apache.commons:commons-lang3_2.13:3.11
+[error]   Not found
+[error]   Not found
+[error]   not found: /Users/christoph/.ivy2/local/org.apache.commons/commons-lang3_2.13/3.11/ivys/ivy.xml
+[error]   not found: https://repo1.maven.org/maven2/org/apache/commons/commons-lang3_2.13/3.11/commons-lang3_2.13-3.11.pom
+[error] 	at lmcoursier.CoursierDependencyResolution.unresolvedWarningOrThrow(CoursierDependencyResolution.scala:258)
+[error] 	at lmcoursier.CoursierDependencyResolution.$anonfun$update$38(CoursierDependencyResolution.scala:227)
+[error] 	at scala.util.Either$LeftProjection.map(Either.scala:573)
+[error] 	at lmcoursier.CoursierDependencyResolution.update(CoursierDependencyResolution.scala:227)
+[error] 	at sbt.librarymanagement.DependencyResolution.update(DependencyResolution.scala:60)
+[error] 	at sbt.internal.LibraryManagement$.resolve$1(LibraryManagement.scala:53)
+[error] 	at sbt.internal.LibraryManagement$.$anonfun$cachedUpdate$12(LibraryManagement.scala:103)
+[error] 	at sbt.util.Tracked$.$anonfun$lastOutput$1(Tracked.scala:73)
+[error] 	at sbt.internal.LibraryManagement$.$anonfun$cachedUpdate$20(LibraryManagement.scala:116)
+[error] 	at scala.util.control.Exception$Catch.apply(Exception.scala:228)
+[error] 	at sbt.internal.LibraryManagement$.$anonfun$cachedUpdate$11(LibraryManagement.scala:116)
+[error] 	at sbt.internal.LibraryManagement$.$anonfun$cachedUpdate$11$adapted(LibraryManagement.scala:97)
+[error] 	at sbt.util.Tracked$.$anonfun$inputChangedW$1(Tracked.scala:219)
+[error] 	at sbt.internal.LibraryManagement$.cachedUpdate(LibraryManagement.scala:130)
+[error] 	at sbt.Classpaths$.$anonfun$updateTask0$5(Defaults.scala:3484)
 [error] 	at scala.Function1.$anonfun$compose$1(Function1.scala:49)
 [error] 	at sbt.internal.util.$tilde$greater.$anonfun$$u2219$1(TypeFunctions.scala:62)
 [error] 	at sbt.std.Transform$$anon$4.work(Transform.scala:68)
@@ -18,4 +33,8 @@
 [error] 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
 [error] 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630)
 [error] 	at java.base/java.lang.Thread.run(Thread.java:831)
-[error] (ssExtractDependencies) Conflicting cross-version suffixes in: io.circe:circe-core, io.circe:circe-numbers
+[error] (ssExtractDependencies) sbt.librarymanagement.ResolveException: Error downloading org.apache.commons:commons-lang3_2.13:3.11
+[error]   Not found
+[error]   Not found
+[error]   not found: /Users/christoph/.ivy2/local/org.apache.commons/commons-lang3_2.13/3.11/ivys/ivy.xml
+[error]   not found: https://repo1.maven.org/maven2/org/apache/commons/commons-lang3_2.13/3.11/commons-lang3_2.13-3.11.pom

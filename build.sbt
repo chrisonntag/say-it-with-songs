@@ -10,6 +10,7 @@ libraryDependencies ++= {
     "com.lihaoyi" %% "cask" % "0.7.3",
     "com.lihaoyi" %% "requests" % "0.5.1",
     "net.debasishg" %% "redisclient" % "3.41",
+    "org.apache.commons" % "commons-lang3" % "3.11",
   )
 }
 
