@@ -1,9 +1,13 @@
 package scraper
 
 import com.redis.RedisClient
+import org.apache.commons.lang3.SerializationUtils
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.jsoup.{Connection, Jsoup}
+
+import com.redis.serialization._
+import Parse.Implicits.parseByteArray
 
 import scala.annotation.tailrec
 import scala.util.Random
@@ -36,8 +40,11 @@ class Scraper(t: String) {
     def queryText(text: String): List[(String, Option[Song])] = {
         val words = text.split(" ").map(_.trim).toList
 
-        def getOrQuery(word: String, url: Option[String]): Option[Song] = url match {
-            case Some(s) => Option(Song(word, s))
+        def getOrQuery(word: String, serializedSong: Option[Array[Byte]]): Option[Song] = serializedSong match {
+            case Some(s) => {
+                val song: Song = SerializationUtils.deserialize(s).asInstanceOf[Song]
+                Option(song)
+            }
             case None => queryWord(word).headOption
         }
 
@@ -45,9 +52,9 @@ class Scraper(t: String) {
             if (idx >= words.length) {
                 acc
             } else {
-                val song: Option[Song] = getOrQuery(words(idx), redisClient.get(words(idx)))
+                val song: Option[Song] = getOrQuery(words(idx), redisClient.get[Array[Byte]](words(idx)))
                 song match {
-                    case Some(s) => redisClient.set(words(idx), s.url)
+                    case Some(s) => redisClient.set(words(idx), SerializationUtils.serialize(s))
                     case None =>
                 }
                 processWords(words, idx + 1, acc ::: List((words(idx), song)))
@@ -87,11 +94,23 @@ class Scraper(t: String) {
     }
 
     def getEmbedUrl(trackUrl: String): String = {
-        getJsoupDoc(trackUrl) match {
-            case Some(doc) => doc.select("meta[itemprop=\"embedUrl\"]").attr("content")
-            case None =>
-                println("Could not connect to get embedUrl for this track: " + trackUrl)
-                ""
+        def queryEmbedUrl(): String = {
+            getJsoupDoc(trackUrl) match {
+                case Some(doc) => {
+                    val embedUrl: String = doc.select("meta[itemprop=\"embedUrl\"]").attr("content")
+                    redisClient.set(trackUrl, SerializationUtils.serialize(embedUrl))
+                    embedUrl
+                }
+                case None => {
+                    println("Could not connect to get embedUrl for this track: " + trackUrl)
+                    ""
+                }
+            }
+        }
+
+        redisClient.get[Array[Byte]](trackUrl) match {
+            case Some(embedUrl) => SerializationUtils.deserialize(embedUrl)
+            case None => queryEmbedUrl()
         }
     }
 

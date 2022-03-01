@@ -1,6 +1,7 @@
 package scraper
 
 import cask.model.Response
+import com.redis.RedisClient
 import jdk.internal.platform.Container
 import scraper.Scraper
 import upickle.default._

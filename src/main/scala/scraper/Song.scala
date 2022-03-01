@@ -1,6 +1,6 @@
 package scraper
 
-case class Song(title: String, url: String) {
+case class Song(title: String, url: String) extends Serializable {
     override def toString: String = {
         title + " | " +
           url
