@@ -94,11 +94,23 @@ class Scraper(t: String) {
     }
 
     def getEmbedUrl(trackUrl: String): String = {
-        getJsoupDoc(trackUrl) match {
-            case Some(doc) => doc.select("meta[itemprop=\"embedUrl\"]").attr("content")
-            case None =>
-                println("Could not connect to get embedUrl for this track: " + trackUrl)
-                ""
+        def queryEmbedUrl(): String = {
+            getJsoupDoc(trackUrl) match {
+                case Some(doc) => {
+                    val embedUrl: String = doc.select("meta[itemprop=\"embedUrl\"]").attr("content")
+                    redisClient.set(trackUrl, SerializationUtils.serialize(embedUrl))
+                    embedUrl
+                }
+                case None => {
+                    println("Could not connect to get embedUrl for this track: " + trackUrl)
+                    ""
+                }
+            }
+        }
+
+        redisClient.get[Array[Byte]](trackUrl) match {
+            case Some(embedUrl) => SerializationUtils.deserialize(embedUrl)
+            case None => queryEmbedUrl()
         }
     }
 

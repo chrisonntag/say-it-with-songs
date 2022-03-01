@@ -1,6 +1,2 @@
-[debug] downloaded https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.11/commons-lang3-3.11.pom
-[debug] downloaded https://repo1.maven.org/maven2/org/apache/commons/commons-parent/51/commons-parent-51.pom
-[debug] downloaded https://repo1.maven.org/maven2/org/apache/apache/23/apache-23.pom
-[debug] downloaded https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.11/commons-lang3-3.11.jar
-[debug] downloaded https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.11/commons-lang3-3.11-javadoc.jar
-[debug] downloaded https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.11/commons-lang3-3.11-sources.jar
+[0m[[0m[0mdebug[0m] [0m[0mdownloaded https://repo1.maven.org/maven2/org/apache/commons/commons-lang3_2.13/3.12.0/commons-lang3_2.13-3.12.0.pom[0m
+[0m[[0m[0mdebug[0m] [0m[0mdownloaded https://repo1.maven.org/maven2/org/apache/commons/commons-lang3_2.13/3.12.0/commons-lang3_2.13-3.12.0.pom.sha1[0m
