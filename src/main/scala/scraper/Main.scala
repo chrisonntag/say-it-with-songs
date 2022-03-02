@@ -4,18 +4,22 @@ import cask.model.Response
 import com.redis.RedisClient
 import jdk.internal.platform.Container
 import scraper.Scraper
+import scraper.model.Song
 import upickle.default._
 
 
 case class Embed(word: String, embedUrl: String, title: String) {}
 
+/**
+ * Cask main route object.
+ */
 object Main extends cask.MainRoutes {
     override def port: Int = 8081
     override def host: String = "0.0.0.0"
 
     @cask.postJson("/api")
     def getResults(text: String): Response[ujson.Obj] = {
-        val scraper: Scraper = new Scraper(text)
+        val scraper: Scraper = new Scraper()
         val res: List[(String, Option[Song])] = scraper.queryText(text)
 
         def processSongs(pairs: List[(String, Option[Song])], idx: Int, acc: List[Embed]): List[Embed] = {

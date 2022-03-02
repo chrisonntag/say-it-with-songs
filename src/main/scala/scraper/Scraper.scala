@@ -1,24 +1,26 @@
 package scraper
 
 import com.redis.RedisClient
-import org.apache.commons.lang3.SerializationUtils
+import org.apache.commons.lang3.{SerializationUtils, StringUtils}
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.jsoup.{Connection, Jsoup}
-
 import com.redis.serialization._
 import Parse.Implicits.parseByteArray
+import scraper.model.Song
 
 import scala.annotation.tailrec
 import scala.util.Random
 
 
-class Scraper(t: String) {
+/**
+ * Initiates the scraper.
+ */
+class Scraper() {
 
     var urlPrefix: String = "https://soundcloud.com"
-    var text: String = t
     var limit: Int = Int.MaxValue
-    var maxJaccard: Int = 3
+    var minDistance: Double = 0.75
     val redisClient = new RedisClient("localhost", 6379)
     val userAgents = Seq(
         "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0",
@@ -37,9 +39,20 @@ class Scraper(t: String) {
           "Chrome/90.0.4430.85 Safari/537.36 Edg/90.0.818.46"
     )
 
+    /**
+     * Queries a given text for songs on SoundCloud with similar titles.
+     * @param text The text.
+     * @return A list of word, song tuples.
+     */
     def queryText(text: String): List[(String, Option[Song])] = {
         val words = text.split(" ").map(_.trim).toList
 
+        /**
+         * Queries songs for a word if the @serializedSong Option is None.
+         * @param word The word to be quried.
+         * @param serializedSong Serialized object option.
+         * @return An optional Song.
+         */
         def getOrQuery(word: String, serializedSong: Option[Array[Byte]]): Option[Song] = serializedSong match {
             case Some(s) => {
                 val song: Song = SerializationUtils.deserialize(s).asInstanceOf[Song]
@@ -48,6 +61,14 @@ class Scraper(t: String) {
             case None => queryWord(word).headOption
         }
 
+        /**
+         * Recursively iterates over a list of words, checks whether there exists a song in redis,
+         * queries SoundCloud and sets a song in redis otherwise.
+         * @param words List of words.
+         * @param idx Current index in the list.
+         * @param acc The remaining list.
+         * @return A list of word, song tuples.
+         */
         def processWords(words: List[String], idx: Int, acc: List[(String, Option[Song])]): List[(String, Option[Song])] = {
             if (idx >= words.length) {
                 acc
@@ -64,6 +85,11 @@ class Scraper(t: String) {
         processWords(words, 0, Nil)
     }
 
+    /**
+     * Scrapes the SoundCloud page for a given word and returns a list of songs with titles similar to the word.
+     * @param word The word.
+     * @return A filtered and sorted list according to some distance metric.
+     */
     def queryWord(word: String): List[Song] = {
         @tailrec
         def scrapeSongList(elements: Elements, idx: Int, acc: List[Song], count: Int, limit: Int): List[Song] = {
@@ -85,7 +111,7 @@ class Scraper(t: String) {
 
                 scrapeSongList(songList, 0, Nil, 0, limit)
                   .filter(_.title.length >= word.length) // minimum as long as the word itself
-                  .filter(_.jaccardIndex(word) <= maxJaccard)
+                  .filter(_.getDistance(word) >= minDistance)
                   .sortBy(_.title.length) // sort in ascending order (shortest result first)
             case None =>
                 println("Could not get tracks document.")
@@ -93,6 +119,11 @@ class Scraper(t: String) {
         }
     }
 
+    /**
+     * Scrapes SoundCloud's meta headers of track pages for an embed URL.
+     * @param trackUrl The track URL.
+     * @return The embed URL.
+     */
     def getEmbedUrl(trackUrl: String): String = {
         def queryEmbedUrl(): String = {
             getJsoupDoc(trackUrl) match {
@@ -114,6 +145,11 @@ class Scraper(t: String) {
         }
     }
 
+    /**
+     * Returns an option on a JSoup Document.
+     * @param url The url of the page.
+     * @return
+     */
     def getJsoupDoc(url: String): Option[Document] = {
         val random = new Random
         val ua = userAgents(random.nextInt(userAgents.length))
