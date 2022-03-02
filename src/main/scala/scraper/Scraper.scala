@@ -20,7 +20,7 @@ class Scraper() {
 
     var urlPrefix: String = "https://soundcloud.com"
     var limit: Int = Int.MaxValue
-    var minDistance: Double = 0.75
+    var minDistance: Double = 0.8
     val redisClient = new RedisClient("localhost", 6379)
     val userAgents = Seq(
         "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0",
